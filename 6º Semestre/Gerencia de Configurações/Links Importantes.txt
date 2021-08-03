@@ -1,0 +1,11 @@
+Livro
+EON, A. Software Configuration Management Handbook. Boston: Artech House, 2015
+
+Link de formulário google
+https://docs.google.com/forms/d/e/1FAIpQLSenON4Y3r4v9KYuqWTRJ8G15V1Le3OYL7qypbxbluYeB-YJXg/viewform
+
+Semantic Versioning 2.0.0
+https://semver.org
+
+Artigo sobre monoliticos
+https://www.hexacta.com/microservicess-dark-side-the-monolith-strikes-back/
