@@ -1,4 +1,8 @@
 body {
+  background-color: #f7f7f7;
+}
+
+body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -10,4 +14,27 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+thead tr {
+  background-color: #04D486;
+}
+
+thead tr th {
+  color: #fff;
+}
+
+#edit {
+  color:#04D486;
+  cursor: pointer;
+}
+
+#delete {
+  color: red;
+  cursor: pointer;
+}
+
+#view {
+  color:#3E84DC;
+  cursor: pointer;
 }
