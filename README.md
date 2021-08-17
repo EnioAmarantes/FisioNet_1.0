@@ -2,12 +2,17 @@
 Um ambiente para gerenciamento de tratamentos para Fisioterapeutas utilizando React
 
 - [ ] Login
-- [ ] Conexão com Firebase
-- [ ] Cadastro e Recuperação de Senhas
+  - :heavy_check_mark: Login pelo Firebird
+  - :heavy_check_mark: Manter conectado
+  - [ ] Cadastro pelo sistema
+  - [ ] Recuperação de Senha
+  - [ ] Logout
+- :heavy_check_mark: Conexão com Firebase
+- [ ] Tela de Artigos
 - [ ] Tela de Pacientes
 - [ ] Tela de Diagnósticos
 - [ ] Tela de Exames
 - [ ] Tela de Lente para Exames
-- [ ] Tela de Tratamentos
+- :heavy_check_mark: Tela de Tratamentos
 
 Eurísticas de Interface
