@@ -1,0 +1,32 @@
+.artigos {
+    display: flex;
+    background-color: #616161;
+    min-height: 100vh;
+    color: #fff;
+    padding: 0;
+}
+
+.btn-artigo {
+    background-color: #3E84DC;
+    color: #fff;
+}
+
+.btn-artigo:hover {
+    background-color: #04D486;
+    color: #fff;
+}
+
+.panel {
+    width: 100%;
+    background-color: #616161;
+}
+
+.panel-heading {
+    background-color: #3E84DC;
+    color:#fff;
+    text-align: center;
+}
+
+.img-artigo {
+    float: left;
+}
