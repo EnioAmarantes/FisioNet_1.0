@@ -1,0 +1,21 @@
+#loginTitle {
+    color: #3E84Dc;
+}
+.btn-login {
+    background-color: #3E84DC;
+    width: 100%;
+    color: #fff;
+}
+
+.btn-login:hover {
+    background-color: #04D486;
+    color:#fff;
+}
+
+#fisioLogo {
+    max-width: 150px;
+}
+
+.login-content {
+    height: 100%;
+}
