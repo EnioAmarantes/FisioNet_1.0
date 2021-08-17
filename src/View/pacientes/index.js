@@ -1,6 +1,26 @@
 import SideBar from "../../Components/sidebar";
+import { useState, useEffect } from "react";
 
 function Pacientes() {
+
+    const [editMode, setEditMode] = useState(0);
+
+    function registrar(){
+
+    }
+
+    function editar(){
+
+    }
+
+    function deletar(){
+
+    }
+
+    function clearMode(){
+
+    }
+
     return (
         <>
             <SideBar />
@@ -21,16 +41,16 @@ function Pacientes() {
                                 <input id="nomePaciente" className="form-control my-2" type="text"
                                     placeholder="Nome do paciente" />
                                 <input id="idadePaciente" className="form-control my-2" type="number" placeholder="Idade" />
-                                <label for="tratamentos">Tratamento</label>
+                                <label htmlFor="tratamentos">Tratamento</label>
                                 <select id="tratamentos" className="form-control my-2">
                                 </select>
-                                <label className="" for="prox_consulta">Próxima Conulta</label>
+                                <label className="" htmlFor="prox_consulta">Próxima Conulta</label>
                                 <input id="prox_consulta" className="form-control my-2" type="date" />
                             </div>
                         </div>
                     </div>
                     <button id="btnPaciente" type="button" className="btn btn-login my-2"
-                        /*onClick={}*/>Cadastrar</button>
+                        onClick={registrar}>{ editMode ? "Editar" : "Cadastrar" }</button>
                 </form>
 
                 <table id="pacientesTab" className="table table-hover">

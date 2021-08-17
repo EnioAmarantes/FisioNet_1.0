@@ -38,3 +38,9 @@ thead tr th {
   color:#3E84DC;
   cursor: pointer;
 }
+
+#divStatus{
+  min-height: 50px;
+  background-color: #f7f7f7;
+  color: #fff;
+}

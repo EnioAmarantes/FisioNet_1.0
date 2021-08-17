@@ -7,9 +7,9 @@ import DeleteButton from "../../Components/buttons/deleteButton";
 
 function Tratamentos() {
 
-    const [editMode, setEditMode] = useState(0);
-    const [index, setIndex] = useState(0);
     const [loadMode, setLoadMode] = useState(0);
+    const [index, setIndex] = useState(0);
+    const [msgStatus, setMsgStatus] = useState();
 
     const [tratamentos, setTratamentos] = useState([]);
     const [nomeTratamento, setNomeTratamento] = useState();
@@ -21,6 +21,9 @@ function Tratamentos() {
     var listaTratamentos = [];
 
     useEffect(() => {
+        if(loadMode == 0)
+            updateStatus(0, "Carregando tratamentos");
+
         firebase.firestore().collection('tratamentos').get().then(async (res) => {
             await res.docs.forEach(doc => {
                 listaTratamentos.push({
@@ -29,31 +32,32 @@ function Tratamentos() {
                 })
             })
             setTratamentos(listaTratamentos);
-            console.log(tratamentos);
+            if(loadMode == 0)
+                updateStatus(0, "Tratamentos carregados");
         })
-    }, [loadMode])
 
-    function registra() {
-        setLoadMode(1);
+    }, [tratamentos.length])
 
-        if(editMode == 0){
+    function registrar() {
+
+        if (loadMode == 0) {
             db.collection('tratamentos').add({
                 nomeTratamento: nomeTratamento,
                 indicacao: indicacao,
                 descTratamento: descTratamento
             }).then(() => {
+                setLoadMode(1)
                 tratamentos.push({
                     nomeTratamento: nomeTratamento,
                     indicacao: indicacao,
                     descTratamento: descTratamento
                 })
-                console.log("sucesso!");
+                updateStatus(0, "Tratamento cadastrado com sucesso!");
             }
             ).catch(() => {
                 console.log("Não foi possível registrar o tratamento");
             })
         } else {
-            console.log("updatando : " + tratamentos[index].id);
             db.collection('tratamentos').doc(tratamentos[index].id).update({
                 nomeTratamento: nomeTratamento,
                 indicacao: indicacao,
@@ -62,26 +66,23 @@ function Tratamentos() {
                 tratamentos[index].nomeTratamento = nomeTratamento;
                 tratamentos[index].indicacao = indicacao;
                 tratamentos[index].descTratamento = descTratamento;
-                console.log("Editado com Sucesso!");
+                updateStatus(1, "Tratamento editado com sucesso!");
             }).catch((e) => {
                 console.log(e);
                 console.log("Não foi possível editar o tratamento");
             })
         }
         clearMode();
-        setLoadMode(0);
     }
 
-    
-    function editar(value){
+
+    function editar(value) {
 
         clearMode();
 
         let index = value.target.parentNode.parentNode.parentNode.rowIndex;
         setIndex(--index);
-        setEditMode(1);
-
-        console.log(index);
+        setLoadMode(1);
 
         document.getElementById("nomeTratamento").value = tratamentos[index].nomeTratamento;
         document.getElementById("indicacao").value = tratamentos[index].indicacao;
@@ -93,36 +94,73 @@ function Tratamentos() {
 
     }
 
-    function deletar(value){
+    function deletar(value) {
+        setLoadMode(1)
+
         let index = value.target.parentNode.parentNode.parentNode.rowIndex;
         setIndex(--index);
-        setLoadMode(1);
 
         db.collection('tratamentos').doc(tratamentos[index].id).delete()
-        .then(() => {
-            tratamentos.splice(index, 1);
-            console.log("tratamento removido");
-        }).catch((e) => {
-            console.log("não foi possível remover o tratamento");
-        })
+            .then(() => {
+                tratamentos.splice(index, 1);
+                updateStatus(2, "Tratamento removido com sucesso!");
+            }).catch((e) => {
+                console.log("não foi possível remover o tratamento");
+            })
 
-        setLoadMode(0);
     }
 
-    function clearMode(){
+    function clearMode() {
         setIndex(0);
-        setEditMode(0);
+        setLoadMode(0);
 
         setNomeTratamento("");
         setIndicacao("");
         setDescTratamento("");
+
+        document.getElementById("nomeTratamento").value = "";
+        document.getElementById("indicacao").value = "";
+        document.getElementById("descTratamento").value = "";
+    }
+
+    function updateStatus(type, text) {
+        console.log(text);
+
+        setStatusColor(type);
+
+        setMsgStatus(text)
+        setTimeout(function () {
+            setMsgStatus(null);
+            setStatusColor();
+        }, 3000);
+    }
+
+    function setStatusColor(type) {
+        switch (type) {
+            case 0:
+                document.getElementById("divStatus").style.backgroundColor = 'lightgreen';
+                break;
+            case 1:
+                document.getElementById("divStatus").style.backgroundColor = 'lightblue';
+                break;
+            case 2:
+                document.getElementById("divStatus").style.backgroundColor = 'orange';
+                break;
+            case 3:
+                document.getElementById("divStatus").style.backgroundColor = 'orangered';
+                break;
+            default:
+                document.getElementById("divStatus").style.backgroundColor = "#f7f7f7";
+                break;
+        }
     }
 
     return (
         <>
             <SideBar />
 
-            <div id="container" className="container justify-content-center col-12">
+            <div id="row" className="container justify-content-center">
+                <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
                 <form className="my-5">
                     <div className="form-group m-5">
                         <h2 className="text-center">Tela de Tratamentos</h2>
@@ -137,7 +175,7 @@ function Tratamentos() {
                     </div>
 
                     <button id="btnTratamento" type="button" className="btn btn-login my-2"
-                        onClick={registra}>{editMode == 0 ? "Cadastrar" : "Editar"}</button>
+                        onClick={registrar}>{loadMode == 0 ? "Cadastrar" : "Editar"}</button>
                 </form>
 
                 <table id="tratamentosTab" className="table table-hover">
