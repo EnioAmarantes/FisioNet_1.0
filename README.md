@@ -9,8 +9,8 @@ Um ambiente para gerenciamento de tratamentos para Fisioterapeutas utilizando Re
   - [ ] Logout
 - :heavy_check_mark: Conexão com Firebase
 - [ ] Tela de Artigos
-- [ ] Tela de Pacientes
-- [ ] Tela de Diagnósticos
+- :heavy_check_mark: Tela de Pacientes
+- :heavy_check_mark: Tela de Diagnósticos
 - [ ] Tela de Exames
 - [ ] Tela de Lente para Exames
 - :heavy_check_mark: Tela de Tratamentos
