@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 import "./sidebar.css";
 
-import { useSelector, useDispatch } from "react-redux";
-
 function SideBar() {
 
     function hide(){
