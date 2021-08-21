@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import firebase from "firebase";
 
 import SideBar from "../../Components/sidebar";
+import EditButton from "../../Components/buttons/editButton";
+import DeleteButton from "../../Components/buttons/deleteButton";
 
 const STATUS_COLOR_OK = 'lightgreen';
 const STATUS_COLOR_EDIT = 'lightblue';
@@ -180,6 +182,7 @@ function Diagnosticos() {
         document.getElementById("reclamacao").value = "";
         document.getElementById("testeRealizado").value = "";
         document.getElementById("diagnostico").value = "";
+        console.log(document.getElementById("diagnostico"));
     }
 
     function updateStatus(type, text) {
@@ -225,11 +228,11 @@ function Diagnosticos() {
                     <div className="form-group m-5">
                         <h2 className="text-center">Tela de Diagnósticos</h2>
 
-                        <label className="" for="dataDiagnostico">Data Diagnóstico</label>
+                        <label className="" htmlFor="dataDiagnostico">Data Diagnóstico</label>
                         <input id="dataDiagnostico" onChange={(e) => setDataDiagnostico(e.target.value)} className="form-control my-2" type="date" />
 
-                        <label for="pacientes">Paciente</label>
-                        <select onChange={(e) => setPaciente(e.target.value)} className="form-control my-2" name="paciente" id="pacientes">
+                        <label htmlFor="pacientes">Paciente</label>
+                        <select value={paciente} onChange={(e) => setPaciente(e.target.value)} className="form-control my-2" name="paciente" id="paciente">
                             <option defaultValue>Selecione um Paciente</option>
                             {
                                 pacientes.map(item => {
@@ -240,18 +243,18 @@ function Diagnosticos() {
                             }
                         </select>
 
-                        <lable for="reclamacaoPaciente">Reclamações do Paciente</lable>
+                        <lable htmlFor="reclamacaoPaciente">Reclamações do Paciente</lable>
                         <textarea id="reclamacao" onChange={(e) => setReclamacao(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
 
-                        <lable for="testeRealizado">Testes Realizados</lable>
+                        <lable htmlFor="testeRealizado">Testes Realizados</lable>
                         <textarea id="testeRealizado" onChange={(e) => setTesteRealizado(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
 
-                        <lable for="diagnostico">Diagnóstico</lable>
+                        <lable htmlFor="diagnostico">Diagnóstico</lable>
                         <textarea id="diagnostico" onChange={(e) => setDiagnostico(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
                     </div>
 
                     <button id="btnDiagnostico" type="button" className="btn btn-login my-2"
-                        /*onClick={}*/>Cadastrar</button>
+                        onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
                 </form>
 
                 <table id="diagnosticosTab" className="table table-hover">
@@ -265,7 +268,20 @@ function Diagnosticos() {
                         </tr>
                     </thead>
                     <tbody>
-
+                    {
+                            diagnosticos.map(item => {
+                                return (<tr key={item.id}>
+                                    <th scope="row">{item.paciente}</th>
+                                    <th>{item.reclamacao}</th>
+                                    <th>{item.dataDiagnostico}</th>
+                                    <th>{item.diagnostico}</th>
+                                    <th className="text-center">
+                                        <span onClick={editar}><EditButton /></span>
+                                        <span onClick={deletar}><DeleteButton /></span>
+                                    </th>
+                                </tr>)
+                            })
+                        }
                     </tbody>
                 </table>
             </div>

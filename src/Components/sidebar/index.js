@@ -38,7 +38,7 @@ function SideBar() {
 
             <li>
                 <Link to="/diagnosticos">
-                    <span id="diagnostico" className="material-icons mx-2">sick</span>
+                    <span id="diagnosticos" className="material-icons mx-2">sick</span>
                     <span className="links_name">Diagnósticos</span>
                 </Link>
                 <span className="tooltip">Pacientes</span>

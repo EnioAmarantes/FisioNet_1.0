@@ -4,6 +4,7 @@ import firebase from "firebase";
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
 import DeleteButton from "../../Components/buttons/deleteButton";
+import AVATAR_PADRAO from "../../Components/images/avatares/avatar-002.jpg";
 
 const STATUS_COLOR_OK = 'lightgreen';
 const STATUS_COLOR_EDIT = 'lightblue';
@@ -42,6 +43,7 @@ function Pacientes() {
     const [tratamento, setTratamento] = useState();
     const [proxConsulta, setProxConsulta] = useState();
     const [avatar, setAvatarNovo] = useState();
+    const [urlImagem, setUrlImagem] = useState();
 
 
     const imgOpt = {
@@ -137,18 +139,19 @@ function Pacientes() {
             if (avatar)
                 storage.ref(`imagens/avatar/${avatar.name}`).put(avatar);
 
+            console.log(avatar);
             db.collection(COLLECTION).doc(pacientes[index].id).update({
                 nomePaciente: nomePaciente,
                 idade: idade,
                 tratamento: tratamento,
                 proxConsulta: proxConsulta,
-                avatar: avatar.name
+                avatar: avatar
             }).then(() => {
                 pacientes[index].nomePaciente = nomePaciente;
                 pacientes[index].idade = idade;
                 pacientes[index].tratamento = tratamento;
                 pacientes[index].proxConsulta = proxConsulta;
-                pacientes[index].avatar = avatar.name;
+                pacientes[index].avatar = avatar;
                 updateStatus(STATUS.EDIT, MSG_EDITADO);
             }).catch((e) => {
                 console.log(MSG_EDITADO_ERRO);
@@ -168,12 +171,17 @@ function Pacientes() {
         setIndex(--index);
         setLoadMode(1);
 
+        firebase.storage().ref(`imagens/avatar/${pacientes[index].avatar}`).getDownloadURL().then(url => {
+            setUrlImagem(url);
+        })
+
         document.getElementById("nomePaciente").value = pacientes[index].nomePaciente;
         document.getElementById("idade").value = pacientes[index].idade;
         document.getElementById("tratamento").value = pacientes[index].tratamento;
         document.getElementById("proxConsulta").value = pacientes[index].proxConsulta;
-        document.getElementById("avatar").src = pacientes[index].imagem;
+        document.getElementById("avatar").src = urlImagem;
 
+        setAvatarNovo(pacientes[index].avatar);
         setNomePaciente(pacientes[index].nomePaciente);
         setIdade(pacientes[index].idade);
         setTratamento(pacientes[index].tratamento);
@@ -199,6 +207,8 @@ function Pacientes() {
                 updateStatus(STATUS.ERRO, MSG_REMOVIDO_ERRO);
             })
 
+        clearMode();
+
     }
 
     function clearMode() {
@@ -215,7 +225,7 @@ function Pacientes() {
         document.getElementById("idade").value = "";
         document.getElementById("tratamento").value = "";
         document.getElementById("proxConsulta").value = "";
-        document.getElementById("avatar").src = "";
+        document.getElementById("avatar").src = AVATAR_PADRAO;
     }
 
     function updateStatus(type, text) {
@@ -259,11 +269,11 @@ function Pacientes() {
                 <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
                 <form className="my-5">
                     <div className="form-group m-5">
-                        <h2 className="text-center">Cadastro de Pacientes</h2>
+                        <h2 className="text-center">{loadMode ? "Editar Pacientes" : "Cadastro de Pacientes"}</h2>
                         <div className="row my-3">
                             <div className="col-md-4 col-xs-12">
                                 <div className="form-group">
-                                    <img id="avatar" className="card-img" src={avatar}
+                                    <img id="avatar" className="card-img" src={urlImagem ? urlImagem : AVATAR_PADRAO}
                                         alt="Imagem Aqui" />
                                     <button className="btn btn-login" type="button" onClick={tirarFoto}>Tire Foto
                                     </button>
@@ -274,12 +284,12 @@ function Pacientes() {
                                     placeholder="Nome do paciente" />
                                 <input id="idade" onChange={(e) => setIdade(e.target.value)} className="form-control my-2" type="number" placeholder="Idade" />
                                 <label htmlFor="tratamento">Tratamento</label>
-                                <select id="tratamento" onChange={(e) => setTratamento(e.target.value)} className="form-control my-2">
+                                <select id="tratamento" value={tratamento} onChange={(e) => setTratamento(e.target.value)} className="form-control my-2">
                                     <option defaultValue>Selecione um Tratamento</option>
                                     {
                                         tratamentos.map(item => {
                                             return (
-                                                <option key={item.id}>{item.nomeTratamento}</option>
+                                                <option key={item.id} value={item.nomeTratamento}>{item.nomeTratamento}</option>
                                             )
                                         })
                                     }
