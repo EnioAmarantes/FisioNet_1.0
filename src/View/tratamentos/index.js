@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import firebase from "firebase";
 import { Redirect } from "react-router";
 import { useSelector } from "react-redux";
+import { Confirm } from 'react-st-modal';
 
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
@@ -125,12 +126,15 @@ function Tratamentos() {
 
     }
 
-    function deletar(value) {
+    async function deletar(value) {
         setLoadMode(1)
 
         let index = value.target.parentNode.parentNode.parentNode.rowIndex;
         setIndex(--index);
 
+        const result = await Confirm('Deseja realmente remover o Tratamento?', 'Remover');
+
+        if(result){
         db.collection(COLLECTION).doc(tratamentos[index].id).delete()
             .then(() => {
                 tratamentos.splice(index, 1);
@@ -140,6 +144,7 @@ function Tratamentos() {
                 console.log(e);
                 updateStatus(STATUS.ERRO, MSG_REMOVIDO_ERRO);
             })
+        }
 
     }
 

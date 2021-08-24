@@ -7,7 +7,7 @@ import { Confirm } from 'react-st-modal';
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
 import DeleteButton from "../../Components/buttons/deleteButton";
-import AVATAR_PADRAO from "../../Components/images/avatares/avatar-002.jpg";
+import ARTIGO_PADRAO from "../../Components/images/artigos/artigo1.jpg";
 
 const STATUS_COLOR_OK = 'lightgreen';
 const STATUS_COLOR_EDIT = 'lightblue';
@@ -22,30 +22,28 @@ const STATUS = {
     ERRO: "erro"
 }
 
-const COLLECTION = 'pacientes';
+const COLLECTION = 'artigos';
 
-const MSG_CARREGANDO = 'Carregando pacientes';
-const MSG_CARREGADO = 'Pacientes carregados';
-const MSG_CADASTRADO = 'Paciente cadastrado com sucesso!';
-const MSG_EDITADO = 'Paciente editado com sucesso!';
-const MSG_REMOVIDO = 'Paciente removido com sucesso!';
+const MSG_CARREGANDO = 'Carregando artigos';
+const MSG_CARREGADO = 'Artigos carregados';
+const MSG_CADASTRADO = 'Artigo cadastrado com sucesso!';
+const MSG_EDITADO = 'Artigo editado com sucesso!';
+const MSG_REMOVIDO = 'Artigo removido com sucesso!';
 
-const MSG_CADASTRADO_ERRO = 'Não foi possível cadastrar o Paciente';
-const MSG_EDITADO_ERRO = 'Não foi possível editar o Paciente';
-const MSG_REMOVIDO_ERRO = 'Não foi possível remover o Paciente';
+const MSG_CADASTRADO_ERRO = 'Não foi possível cadastrar o Artigo';
+const MSG_EDITADO_ERRO = 'Não foi possível editar o Artigo';
+const MSG_REMOVIDO_ERRO = 'Não foi possível remover o Artigo';
 
-function Pacientes() {
+function ArtigoNovo() {
     const [loadMode, setLoadMode] = useState(0);
     const [index, setIndex] = useState(0);
     const [msgStatus, setMsgStatus] = useState();
 
-    const [pacientes, setPacientes] = useState([]);
-    const [nomePaciente, setNomePaciente] = useState();
-    const [idade, setIdade] = useState();
-    const [tratamentos, setTratamentos] = useState([]);
-    const [tratamento, setTratamento] = useState();
-    const [proxConsulta, setProxConsulta] = useState();
-    const [avatar, setAvatarNovo] = useState();
+    const [artigos, setArtigos] = useState([]);
+    const [tituloArtigo, setTituloArtigo] = useState();
+    const [linkArtigo, setLinkArtigo] = useState();
+    const [introArtigo, setIntroArtigo] = useState();
+    const [artigoImg, setArtigoImg] = useState();
     const [urlImagem, setUrlImagem] = useState();
 
 
@@ -65,69 +63,56 @@ function Pacientes() {
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    var listaPacientes = [];
-    var listaTratamentos = [];
+    var listaArtigos = [];
 
     useEffect(() => {
         if (loadMode == 0)
             updateStatus(STATUS.OK, MSG_CARREGANDO);
 
-        firebase.firestore().collection('tratamentos').get().then(async (res) => {
-            await res.docs.forEach(doc => {
-                listaTratamentos.push({
-                    id: doc.id,
-                    ...doc.data()
-                });
-                setTratamentos(listaTratamentos);
-            })
-        })
-
         firebase.firestore().collection(COLLECTION).get().then(async (res) => {
             await res.docs.forEach(doc => {
-                listaPacientes.push({
+                listaArtigos.push({
                     id: doc.id,
                     ...doc.data()
                 })
             })
-            setPacientes(listaPacientes);
+            setArtigos(listaArtigos);
             if (loadMode == 0)
                 updateStatus(STATUS.OK, MSG_CARREGADO);
         })
 
-    }, [pacientes.length])
+    }, [artigos.length])
 
     async function tirarFoto() {
         let files = await window.showOpenFilePicker(imgOpt);
 
         let newFoto = await files[0].getFile();
-        setAvatarNovo(await files[0].getFile());
+        setArtigoImg(await files[0].getFile());
 
         let reader = new FileReader();
         reader.readAsDataURL(newFoto);
         reader.onload = function (event) {
-            document.getElementById("avatar").src = event.target.result;
+            document.getElementById("artigoImg").src = event.target.result;
         }
     }
 
     function registrar() {
 
         if (loadMode == 0) {
-            if (avatar)
-                storage.ref(`imagens/avatar/${avatar.name}`).put(avatar).then(() => {
+            if (artigoImg)
+                storage.ref(`imagens/artigo/${artigoImg.name}`).put(artigoImg).then(() => {
                     db.collection(COLLECTION).add({
-                        nomePaciente: nomePaciente,
-                        idade: idade,
-                        tratamento: tratamento,
-                        proxConsulta: proxConsulta,
-                        avatar: avatar.name
+                        tituloArtigo: tituloArtigo,
+                        introArtigo: introArtigo,
+                        linkArtigo: linkArtigo,
+                        artigoImg: artigoImg.name
                     }).then(() => {
                         setLoadMode(1)
-                        pacientes.push({
-                            nomePaciente: nomePaciente,
-                            idade: idade,
-                            tratamento: tratamento,
-                            proxConsulta: proxConsulta,
-                            avatar: avatar.name
+                        artigos.push({
+                            tituloArtigo: tituloArtigo,
+                            introArtigo: introArtigo,
+                            linkArtigo: linkArtigo,
+                            artigoImg: artigoImg.name
                         })
                         updateStatus(STATUS.OK, MSG_CADASTRADO);
                     }
@@ -139,22 +124,19 @@ function Pacientes() {
                 })
 
         } else {
-            if (avatar)
-                storage.ref(`imagens/avatar/${avatar.name}`).put(avatar);
+            if (artigoImg)
+                storage.ref(`imagens/artigo/${artigoImg.name}`).put(artigoImg);
 
-            console.log(avatar);
-            db.collection(COLLECTION).doc(pacientes[index].id).update({
-                nomePaciente: nomePaciente,
-                idade: idade,
-                tratamento: tratamento,
-                proxConsulta: proxConsulta,
-                avatar: avatar
+            db.collection(COLLECTION).doc(artigos[index].id).update({
+                tituloArtigo: tituloArtigo,
+                introArtigo: introArtigo,
+                linkArtigo: linkArtigo,
+                artigoImg: artigoImg.name
             }).then(() => {
-                pacientes[index].nomePaciente = nomePaciente;
-                pacientes[index].idade = idade;
-                pacientes[index].tratamento = tratamento;
-                pacientes[index].proxConsulta = proxConsulta;
-                pacientes[index].avatar = avatar;
+                artigos[index].tituloArtigo = tituloArtigo;
+                artigos[index].introArtigo = introArtigo;
+                artigos[index].linkArtigo = linkArtigo;
+                artigos[index].artigoImg = artigoImg;
                 updateStatus(STATUS.EDIT, MSG_EDITADO);
             }).catch((e) => {
                 console.log(MSG_EDITADO_ERRO);
@@ -174,21 +156,19 @@ function Pacientes() {
         setIndex(--index);
         setLoadMode(1);
 
-        firebase.storage().ref(`imagens/avatar/${pacientes[index].avatar}`).getDownloadURL().then(url => {
+        firebase.storage().ref(`imagens/artigo/${artigos[index].artigoImg}`).getDownloadURL().then(url => {
             setUrlImagem(url);
         })
 
-        document.getElementById("nomePaciente").value = pacientes[index].nomePaciente;
-        document.getElementById("idade").value = pacientes[index].idade;
-        document.getElementById("tratamento").value = pacientes[index].tratamento;
-        document.getElementById("proxConsulta").value = pacientes[index].proxConsulta;
-        document.getElementById("avatar").src = urlImagem;
+        document.getElementById("tituloArtigo").value = artigos[index].tituloArtigo;
+        document.getElementById("introArtigo").value = artigos[index].introArtigo;
+        document.getElementById("linkArtigo").value = artigos[index].linkArtigo;
+        document.getElementById("artigoImg").src = urlImagem;
 
-        setAvatarNovo(pacientes[index].avatar);
-        setNomePaciente(pacientes[index].nomePaciente);
-        setIdade(pacientes[index].idade);
-        setTratamento(pacientes[index].tratamento);
-        setProxConsulta(pacientes[index].proxConsulta);
+        setTituloArtigo(artigos[index].tituloArtigo);
+        setIntroArtigo(artigos[index].introArtigo);
+        setLinkArtigo(artigos[index].linkArtigo);
+        setArtigoImg(artigos[index].artigoImg);
 
     }
 
@@ -201,11 +181,11 @@ function Pacientes() {
         const result = await Confirm('Deseja realmente remover o Paciente?', 'Remover');
 
         if(result){
-        storage.ref(`imagens/avatar/${pacientes[index].avatar.name}`).delete();
+        storage.ref(`imagens/artiog/${artigos[index].artigoImg.name}`).delete();
 
-        db.collection(COLLECTION).doc(pacientes[index].id).delete()
+        db.collection(COLLECTION).doc(artigos[index].id).delete()
             .then(() => {
-                pacientes.splice(index, 1);
+                artigos.splice(index, 1);
                 updateStatus(STATUS.REMOVE, MSG_REMOVIDO);
             }).catch((e) => {
                 console.log(MSG_REMOVIDO_ERRO);
@@ -221,17 +201,15 @@ function Pacientes() {
         setIndex(0);
         setLoadMode(0);
 
-        setNomePaciente("");
-        setIdade("");
-        setTratamento("");
-        setProxConsulta("");
-        setAvatarNovo("");
+        setTituloArtigo("");
+        setIntroArtigo("");
+        setLinkArtigo("");
+        setArtigoImg("");
 
-        document.getElementById("nomePaciente").value = "";
-        document.getElementById("idade").value = "";
-        document.getElementById("tratamento").value = "";
-        document.getElementById("proxConsulta").value = "";
-        document.getElementById("avatar").src = AVATAR_PADRAO;
+        document.getElementById("tituloArtigo").value = "";
+        document.getElementById("introArtigo").value = "";
+        document.getElementById("linkArtigo").value = "";
+        document.getElementById("artigoImg").src = ARTIGO_PADRAO;
     }
 
     function updateStatus(type, text) {
@@ -280,59 +258,49 @@ function Pacientes() {
                         <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
                         <form className="my-5">
                             <div className="form-group m-5">
-                                <h2 className="text-center">{loadMode ? "Editar Pacientes" : "Cadastro de Pacientes"}</h2>
+                                <h2 className="text-center">{loadMode ? "Editar Artigos" : "Cadastro de Artigos"}</h2>
                                 <div className="row my-3">
                                     <div className="col-md-4 col-xs-12">
                                         <div className="form-group">
-                                            <img id="avatar" className="card-img" src={urlImagem ? urlImagem : AVATAR_PADRAO}
+                                            <img id="artigoImg" className="card-img" src={urlImagem ? urlImagem : ARTIGO_PADRAO}
                                                 alt="Imagem Aqui" />
                                             <button className="btn btn-login" type="button" onClick={tirarFoto}>Tire Foto
                                             </button>
                                         </div>
                                     </div>
                                     <div className="block col-8">
-                                        <input id="nomePaciente" onChange={(e) => setNomePaciente(e.target.value)} className="form-control my-2" type="text"
-                                            placeholder="Nome do paciente" />
-                                        <input id="idade" onChange={(e) => setIdade(e.target.value)} className="form-control my-2" type="number" placeholder="Idade" />
-                                        <label htmlFor="tratamento">Tratamento</label>
-                                        <select id="tratamento" value={tratamento} onChange={(e) => setTratamento(e.target.value)} className="form-control my-2">
-                                            <option defaultValue>Selecione um Tratamento</option>
-                                            {
-                                                tratamentos.map(item => {
-                                                    return (
-                                                        <option key={item.id} value={item.nomeTratamento}>{item.nomeTratamento}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                        <label className="" htmlFor="prox_consulta">Próxima Consulta</label>
-                                        <input id="proxConsulta" onChange={(e) => setProxConsulta(e.target.value)} className="form-control my-2" type="date" />
+                                        <input id="tituloArtigo" onChange={(e) => setTituloArtigo(e.target.value)} className="form-control my-2" type="text"
+                                            placeholder="Título do Artigo" />
+                                        <lable htmlFor="introArtigo">Reclamações do Paciente</lable>
+
+                                    <textarea id="introArtigo" onChange={(e) => setIntroArtigo(e.target.value)} className="form-control rounded-0 my-2" rows="4"></textarea>
+
+                                        <label className="" htmlFor="linkArtigo">Link do Artigo</label>
+                                        <input id="linkArtigo" onChange={(e) => setLinkArtigo(e.target.value)} className="form-control my-2" type="text" />
                                     </div>
                                 </div>
                             </div>
-                            <button id="btnPaciente" type="button" className="btn btn-login my-2"
+                            <button id="btnArtigo" type="button" className="btn btn-login my-2"
                                 onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
                         </form>
 
-                        <table id="pacientesTab" className="table table-hover">
+                        <table id="artigosTab" className="table table-hover">
                             <thead key="thread">
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Idade</th>
-                                    <th>Tratamento</th>
-                                    <th>Próxima Consulta</th>
+                                    <th>Título</th>
+                                    <th>Introdução</th>
+                                    <th>Disponível em:</th>
                                     <th className="text-center">Opções</th>
                                 </tr>
                             </thead>
 
                             <tbody key="tbody">
                                 {
-                                    pacientes.map(item => {
+                                    artigos.map(item => {
                                         return (<tr key={item.id}>
-                                            <th scope="row">{item.nomePaciente}</th>
-                                            <th>{item.idade}</th>
-                                            <th>{item.tratamento}</th>
-                                            <th>{item.proxConsulta}</th>
+                                            <th scope="row">{item.tituloArtigo}</th>
+                                            <th>{item.introArtigo}</th>
+                                            <th>{item.linkArtigo}</th>
                                             <th className="text-center">
                                                 <span onClick={editar}><EditButton /></span>
                                                 <span onClick={deletar}><DeleteButton /></span>
@@ -353,4 +321,4 @@ function Pacientes() {
     );
 }
 
-export default Pacientes;
+export default ArtigoNovo;

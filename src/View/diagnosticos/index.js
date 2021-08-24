@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {useSelector} from "react-redux";
 import firebase from "firebase";
 import { Redirect } from "react-router";
+import { Confirm } from 'react-st-modal';
 
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
@@ -150,21 +151,25 @@ function Diagnosticos() {
 
     }
 
-    function deletar(value) {
+    async function deletar(value) {
         setLoadMode(1)
 
         let index = value.target.parentNode.parentNode.parentNode.rowIndex;
         setIndex(--index);
 
-        db.collection(COLLECTION).doc(diagnosticos[index].id).delete()
-            .then(() => {
-                diagnosticos.splice(index, 1);
-                updateStatus(STATUS.REMOVE, MSG_REMOVIDO);
-            }).catch((e) => {
-                console.log(MSG_REMOVIDO_ERRO);
-                console.log(e);
-                updateStatus(STATUS.ERRO, MSG_REMOVIDO_ERRO);
-            })
+        const result = await Confirm('Deseja realmente remover o Diagnóstico?', 'Remover');
+
+        if(result){
+            db.collection(COLLECTION).doc(diagnosticos[index].id).delete()
+                .then(() => {
+                    diagnosticos.splice(index, 1);
+                    updateStatus(STATUS.REMOVE, MSG_REMOVIDO);
+                }).catch((e) => {
+                    console.log(MSG_REMOVIDO_ERRO);
+                    console.log(e);
+                    updateStatus(STATUS.ERRO, MSG_REMOVIDO_ERRO);
+                })
+        }
 
     }
 

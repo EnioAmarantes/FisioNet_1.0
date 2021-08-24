@@ -14,6 +14,7 @@ import Pacientes from "./View/pacientes";
 import Tratamentos from "./View/tratamentos";
 import Diagnosticos from "./View/diagnosticos";
 import Exames from "./View/exames";
+import ArtigoNovo from './View/artigos/artigoNovo';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route exact path="/tratamentos" component={Tratamentos} />
           <Route exact path="/diagnosticos" component={Diagnosticos} />
           <Route exact path="/exames" component={Exames} />
+          <Route exact path="/artigoNovo" component={ArtigoNovo} />
         </Router>
       </PersistGate>
     </Provider>
