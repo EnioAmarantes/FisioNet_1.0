@@ -23,7 +23,7 @@ function LostPassword() {
     return (
         <>
         <div className="row m-0 p-0 align-items-center justify-content-center">
-            <div className="col-8 m-0">
+            <div className="col-8 m-0 p-0">
                 <Artigos />
 
             </div>

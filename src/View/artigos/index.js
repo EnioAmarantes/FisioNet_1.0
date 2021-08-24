@@ -13,6 +13,7 @@ function Artigos() {
     const listaArtigos = [];
 
     useEffect(() => {
+
         db.collection('artigos').get().then(async (res) => {
             await res.docs.forEach(doc => {
                 listaArtigos.push({
@@ -20,8 +21,8 @@ function Artigos() {
                     ...doc.data()
                 });
                 setArtigos(listaArtigos);
-                setLoadMode(0);
             })
+            setLoadMode(0)
         })
     }, []);
 
