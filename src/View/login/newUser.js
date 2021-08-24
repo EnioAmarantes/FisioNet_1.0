@@ -3,6 +3,8 @@ import firebase from "../../Config/firebase";
 import "firebase/auth";
 import "./login.css";
 import Artigos from "../artigos";
+import Logo from "../../Components/images/fisioLogo.png";
+import { useDispatch } from "react-redux";
 
 function NewUser() {
 
@@ -11,6 +13,7 @@ function NewUser() {
     const [msgType, setMsgType] = useState();
     const [msg, setMsg] = useState();
     const [carregando, setCarregando] = useState();
+    const dispatch = useDispatch();
 
     function cadastrar() {
         setCarregando(1);
@@ -25,6 +28,16 @@ function NewUser() {
             .then(res => {
                 setCarregando(0);
                 setMsgType("ok");
+
+                firebase.auth().signInWithEmailAndPassword(email, senha)
+                    .then(res => {
+                        setTimeout(() => {
+                            dispatch({ type: 'LOGIN', userEmail: email });
+                        }, 500)
+                    })
+                    .catch(err => {
+                        setMsgType("erro");
+                    })
             }
             )
             .catch(err => {
@@ -49,28 +62,31 @@ function NewUser() {
 
     return (
         <>
-            <div className="row">
-                <div className="col-8">
+            <div className="row m-0 p-0 align-items-center justify-content-center">
+                <div className="col-8 m-0">
                     <Artigos />
 
                 </div>
 
-                <div className="col-4 d-flex align-items-center justify-content-center">
+                <div className="col-4">
                     <div className="form-cadastro">
                         <form className="text-center form-login mx-auto mt-9">
+                            <img id="fisioLogo" src={Logo} alt="logo da Fisionet" />
                             <h1 className="h3 mb-3 text-black font-weight-bold">Cadastro</h1>
 
                             <input onChange={(e) => setEmail(e.target.value)} type="email" className="form-control my-2" placeholder="E-mail" />
-                            <input onChange={(e) => setSenha(e.target.value)} type="password" className="form-control my-2" placeholder="Senha" />
+                            <div>
+                                <input onChange={(e) => setSenha(e.target.value)} id="password" className="form-control my-2" type="password" placeholder="Senha" />
+                                <span class="lnr lnr-eye"></span>
+                            </div>
 
                             {
                                 carregando ?
                                     <div className="spinner-border text-secondary" role="status">
                                         <span className="sr-only"></span>
                                     </div>
-                                    : <button onClick={cadastrar} type="button" className="btn btn-lg mt-3 mb-5 btn-cadastro">Cadastrar</button>
+                                    : <button onClick={cadastrar} type="button" className="btn btn-lg btn-login btn-block my-4">Cadastrar e Logar</button>
                             }
-
 
                             <div className="text-black text-center my-5">
                                 {msgType === "ok" && <span><strong>Uau!</strong> Usuário cadastrado com Sucesso. &#128521;</span>}

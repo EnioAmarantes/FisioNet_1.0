@@ -1,5 +1,5 @@
 import { createStore } from "redux";
-import {userReducer } from "./userReducer";
+import userReducer from "./userReducer";
 
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";

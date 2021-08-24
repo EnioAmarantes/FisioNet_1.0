@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firebase from "firebase";
+import { Redirect } from "react-router";
+import { useSelector } from "react-redux";
 
 import EXAME_PADRAO from "../../Components/images/exames/exame-001.jpg";
 
@@ -232,27 +234,29 @@ function Exames() {
     }
 
     function setStatusColor(type) {
-        switch (type) {
-            case STATUS.OK:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
-                break;
-            case STATUS.EDIT:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
-                break;
-            case STATUS.REMOVE:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
-                break;
-            case STATUS.ERRO:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
-                break;
-            default:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
-                ;
-                break;
+        if(document.getElementById("divStatus") != null){
+            switch (type) {
+                case STATUS.OK:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
+                    break;
+                case STATUS.EDIT:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
+                    break;
+                case STATUS.REMOVE:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
+                    break;
+                case STATUS.ERRO:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
+                    break;
+                default:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
+                    ;
+                    break;
+            }
         }
     }
 
-    function look(value){
+    function look(value) {
         let index = value.target.parentNode.parentNode.parentNode.rowIndex;
         setIndex(--index);
 
@@ -261,159 +265,168 @@ function Exames() {
         })
 
         document.getElementById("btnModal").click();
-    
+
         imageZoom("zoomExame", "exameDetalhe");
     }
-    
+
     function imageZoom(imgID, resultID) {
         var img, lens, result, cx, cy;
         img = document.getElementById(imgID);
         result = document.getElementById(resultID);
-    
+
         lens = document.createElement("DIV");
         lens.setAttribute("class", "img-zoom-lens");
-    
+
         img.parentElement.insertBefore(lens, img);
-    
+
         cx = result.offsetWidth / lens.offsetWidth;
         cy = result.offsetHeight / lens.offsetHeight;
-    
+
         result.style.backgroundImage = "url('" + img.src + "')";
         result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
-    
+
         lens.addEventListener("mousemove", moveLens);
         img.addEventListener("mousemove", moveLens);
-    
+
         lens.addEventListener("touchmove", moveLens);
         img.addEventListener("touchmove", moveLens);
         function moveLens(e) {
-          var pos, x, y;
-    
-          e.preventDefault();
-    
-          pos = getCursorPos(e);
-    
-          x = pos.x - (lens.offsetWidth / 2);
-          y = pos.y - (lens.offsetHeight / 2);
-    
-          if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
-          if (x < 0) {x = 0;}
-          if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
-          if (y < 0) {y = 0;}
-    
-          lens.style.left = x + "px";
-          lens.style.top = y + "px";
-    
-          result.style.backgroundPosition = "-" + (x * (result.offsetWidth / lens.offsetWidth / 3)) + "px -" + (y * (result.offsetHeight / lens.offsetHeight / 3)) + "px";
+            var pos, x, y;
+
+            e.preventDefault();
+
+            pos = getCursorPos(e);
+
+            x = pos.x - (lens.offsetWidth / 2);
+            y = pos.y - (lens.offsetHeight / 2);
+
+            if (x > img.width - lens.offsetWidth) { x = img.width - lens.offsetWidth; }
+            if (x < 0) { x = 0; }
+            if (y > img.height - lens.offsetHeight) { y = img.height - lens.offsetHeight; }
+            if (y < 0) { y = 0; }
+
+            lens.style.left = x + "px";
+            lens.style.top = y + "px";
+
+            result.style.backgroundPosition = "-" + (x * (result.offsetWidth / lens.offsetWidth / 3)) + "px -" + (y * (result.offsetHeight / lens.offsetHeight / 3)) + "px";
         }
         function getCursorPos(e) {
-          var a, x = 0, y = 0;
-          e = e || window.event;
-    
-          a = img.getBoundingClientRect();
-    
-          x = e.pageX - a.left;
-          y = e.pageY - a.top;
-    
-          x = x - window.pageXOffset;
-          y = y - window.pageYOffset;
-          return {x : x, y : y};
+            var a, x = 0, y = 0;
+            e = e || window.event;
+
+            a = img.getBoundingClientRect();
+
+            x = e.pageX - a.left;
+            y = e.pageY - a.top;
+
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return { x: x, y: y };
         }
-      }
+    }
 
     return (
         <>
-            <SideBar />
+            {
+                useSelector(state => state.userLoged) > 0 ?
+                    <>
+                        <SideBar />
 
-            <div id="container" className="container justify-content-center col-12">
-                <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
-                <form className="my-5">
-                    <div className="form-group m-5">
-                        <h2 className="text-center">Cadastro de Exames</h2>
-                        <div className="row my-3">
-                            <div className="col-md-4 col-xs-12">
-                                <div>
-                                    <img id="imgExame" className="card-img" src={urlImagem ? urlImagem : EXAME_PADRAO}
-                                        alt="Exames Aqui" />
-                                    <button className="btn btn-login" type="button" onClick={tirarFoto}>Registro do
-                                        Exame</button>
+                        <div id="container" className="container justify-content-center col-12">
+                            <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
+                            <form className="my-5">
+                                <div className="form-group m-5">
+                                    <h2 className="text-center">Cadastro de Exames</h2>
+                                    <div className="row my-3">
+                                        <div className="col-md-4 col-xs-12">
+                                            <div>
+                                                <img id="imgExame" className="card-img" src={urlImagem ? urlImagem : EXAME_PADRAO}
+                                                    alt="Exames Aqui" />
+                                                <button className="btn btn-login" type="button" onClick={tirarFoto}>Registro do
+                                                    Exame</button>
+                                            </div>
+                                        </div>
+                                        <div className="block col-8">
+                                            <input id="tipoExame" onChange={(e) => setTipoExame(e.target.value)} className="form-control my-2" type="text" placeholder="Tipo de Exame" />
+                                            <label for="pacientesList">Paciente</label>
+                                            <select id="pacientesList" value={paciente} onChange={(e) => setPaciente(e.target.value)} className="form-control my-2">
+                                                <option defaultValue>Selecione um Paciente</option>
+                                                {
+                                                    pacientes.map(item => {
+                                                        return (
+                                                            <option key={item.id} value={item.nomePaciente}>{item.nomePaciente}</option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                            <label className="" for="dataExame">Data do Exame</label>
+                                            <input id="dataExame" onChange={(e) => setDataExame(e.target.value)} className="form-control my-2" type="date" />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="block col-8">
-                                <input id="tipoExame" onChange={(e) => setTipoExame(e.target.value)} className="form-control my-2" type="text" placeholder="Tipo de Exame" />
-                                <label for="pacientesList">Paciente</label>
-                                <select id="pacientesList" value={paciente} onChange={(e) => setPaciente(e.target.value)} className="form-control my-2">
-                                    <option defaultValue>Selecione um Paciente</option>
+                                <button id="btnExame" type="button" className="btn btn-login my-2" onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
+                            </form>
+
+                            <table id="examesTab" className="table table-hover">
+                                <thead key="thead">
+                                    <tr>
+                                        <th>Tipo de Exame</th>
+                                        <th>Paciente</th>
+                                        <th>Data do Exame</th>
+                                        <th className="text-center">Opções</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody key="tbody">
                                     {
-                                        pacientes.map(item => {
-                                            return (
-                                                <option key={item.id} value={item.nomePaciente}>{item.nomePaciente}</option>
-                                            )
+                                        exames.map(item => {
+                                            return (<tr key={item.id}>
+                                                <th scope="row">{item.tipoExame}</th>
+                                                <th>{item.paciente}</th>
+                                                <th>{item.dataExame}</th>
+                                                <th className="text-center">
+                                                    <span onClick={editar}><EditButton /></span>
+                                                    <span onClick={deletar}><DeleteButton /></span>
+                                                    <span onClick={look}><ViewButton /></span>
+                                                </th>
+                                            </tr>)
                                         })
                                     }
-                                </select>
-                                <label className="" for="dataExame">Data do Exame</label>
-                                <input id="dataExame" onChange={(e) => setDataExame(e.target.value)} className="form-control my-2" type="date" />
-                            </div>
-                        </div>
-                    </div>
-                    <button id="btnExame" type="button" className="btn btn-login my-2" onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
-                </form>
+                                </tbody>
+                            </table>
 
-                <table id="examesTab" className="table table-hover">
-                    <thead key="thead">
-                        <tr>
-                            <th>Tipo de Exame</th>
-                            <th>Paciente</th>
-                            <th>Data do Exame</th>
-                            <th className="text-center">Opções</th>
-                        </tr>
-                    </thead>
-
-                    <tbody key="tbody">
-                        {
-                            exames.map(item => {
-                                return (<tr key={item.id}>
-                                    <th scope="row">{item.tipoExame}</th>
-                                    <th>{item.paciente}</th>
-                                    <th>{item.dataExame}</th>
-                                    <th className="text-center">
-                                        <span onClick={editar}><EditButton /></span>
-                                        <span onClick={deletar}><DeleteButton /></span>
-                                        <span onClick={look}><ViewButton /></span>
-                                    </th>
-                                </tr>)
-                            })
-                        }
-                    </tbody>
-                </table>
-
-            </div>
-
-            <div class="container">
-            <button id="btnModal" className="hidden" type="button" data-toggle="modal" data-target="#myModal">Abrir Modal</button>
-                <div id="myModal" class="modal fade" role="dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Detalhes do Exame</h2>
                         </div>
 
-                        <div class="modal-body mx-auto">
-                            <div class="img-zoom-container">
-                                <img id="zoomExame" src={urlLens} alt="Exame em evidência" width="300" height="240" />
-                                <div id="exameDetalhe" src={urlLens} class="img-zoom-result my-auto">
+                        <div class="container">
+                            <button id="btnModal" className="hidden" type="button" data-toggle="modal" data-target="#myModal">Abrir Modal</button>
+                            <div id="myModal" class="modal fade" role="dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2>Detalhes do Exame</h2>
+                                    </div>
+
+                                    <div class="modal-body mx-auto">
+                                        <div class="img-zoom-container">
+                                            <img id="zoomExame" src={urlLens} alt="Exame em evidência" width="300" height="240" />
+                                            <div id="exameDetalhe" src={urlLens} class="img-zoom-result my-auto">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal-footer">
-
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+                    </>
+                    :
+                    <>
+                        <Redirect to="home" />
+                    </>
+            }
         </>
     );
 }

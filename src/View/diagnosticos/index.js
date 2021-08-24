@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import {useSelector} from "react-redux";
 import firebase from "firebase";
+import { Redirect } from "react-router";
 
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
@@ -51,7 +52,7 @@ function Diagnosticos() {
     var listaPacientes = [];
 
     useEffect(() => {
-        if(loadMode == 0)
+        if (loadMode == 0)
             updateStatus(STATUS.OK, MSG_CARREGANDO);
 
         firebase.firestore().collection('pacientes').get().then(async (res) => {
@@ -72,7 +73,7 @@ function Diagnosticos() {
                 })
             })
             setDiagnosticos(listaDiagnosticos);
-            if(loadMode == 0)
+            if (loadMode == 0)
                 updateStatus(STATUS.OK, MSG_CARREGADO);
         })
 
@@ -198,93 +199,104 @@ function Diagnosticos() {
     }
 
     function setStatusColor(type) {
-        switch (type) {
-            case STATUS.OK:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
-                break;
-            case STATUS.EDIT:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
-                break;
-            case STATUS.REMOVE:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
-                break;
-            case STATUS.ERRO:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
-                break;
-            default:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
-                ;
-                break;
+        if(document.getElementById("divStatus") != null){
+            switch (type) {
+                case STATUS.OK:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
+                    break;
+                case STATUS.EDIT:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
+                    break;
+                case STATUS.REMOVE:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
+                    break;
+                case STATUS.ERRO:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
+                    break;
+                default:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
+                    ;
+                    break;
+            }
         }
     }
 
     return (
         <>
-            <SideBar />
+            {
+                useSelector(state => state.userLoged) > 0 ?
+                    <>
+                        <SideBar />
 
-            <div id="container" className="container justify-content-center col-12">
-            <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
-                <form className="my-5">
-                    <div className="form-group m-5">
-                        <h2 className="text-center">Tela de Diagnósticos</h2>
+                        <div id="container" className="container justify-content-center col-12">
+                            <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
+                            <form className="my-5">
+                                <div className="form-group m-5">
+                                    <h2 className="text-center">Tela de Diagnósticos</h2>
 
-                        <label className="" htmlFor="dataDiagnostico">Data Diagnóstico</label>
-                        <input id="dataDiagnostico" onChange={(e) => setDataDiagnostico(e.target.value)} className="form-control my-2" type="date" />
+                                    <label className="" htmlFor="dataDiagnostico">Data Diagnóstico</label>
+                                    <input id="dataDiagnostico" onChange={(e) => setDataDiagnostico(e.target.value)} className="form-control my-2" type="date" />
 
-                        <label htmlFor="pacientes">Paciente</label>
-                        <select value={paciente} onChange={(e) => setPaciente(e.target.value)} className="form-control my-2" name="paciente" id="paciente">
-                            <option defaultValue>Selecione um Paciente</option>
-                            {
-                                pacientes.map(item => {
-                                    return(
-                                        <option key={item.id}>{item.nomePaciente}</option>
-                                    )
-                                })
-                            }
-                        </select>
+                                    <label htmlFor="pacientes">Paciente</label>
+                                    <select value={paciente} onChange={(e) => setPaciente(e.target.value)} className="form-control my-2" name="paciente" id="paciente">
+                                        <option defaultValue>Selecione um Paciente</option>
+                                        {
+                                            pacientes.map(item => {
+                                                return (
+                                                    <option key={item.id}>{item.nomePaciente}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
 
-                        <lable htmlFor="reclamacaoPaciente">Reclamações do Paciente</lable>
-                        <textarea id="reclamacao" onChange={(e) => setReclamacao(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
+                                    <lable htmlFor="reclamacaoPaciente">Reclamações do Paciente</lable>
+                                    <textarea id="reclamacao" onChange={(e) => setReclamacao(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
 
-                        <lable htmlFor="testeRealizado">Testes Realizados</lable>
-                        <textarea id="testeRealizado" onChange={(e) => setTesteRealizado(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
+                                    <lable htmlFor="testeRealizado">Testes Realizados</lable>
+                                    <textarea id="testeRealizado" onChange={(e) => setTesteRealizado(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
 
-                        <lable htmlFor="diagnostico">Diagnóstico</lable>
-                        <textarea id="diagnostico" onChange={(e) => setDiagnostico(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
-                    </div>
+                                    <lable htmlFor="diagnostico">Diagnóstico</lable>
+                                    <textarea id="diagnostico" onChange={(e) => setDiagnostico(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
+                                </div>
 
-                    <button id="btnDiagnostico" type="button" className="btn btn-login my-2"
-                        onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
-                </form>
+                                <button id="btnDiagnostico" type="button" className="btn btn-login my-2"
+                                    onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
+                            </form>
 
-                <table id="diagnosticosTab" className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Paciente</th>
-                            <th>Reclamações</th>
-                            <th>Data Diagnóstico</th>
-                            <th>Diagnóstico</th>
-                            <th className="text-center">Opções</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {
-                            diagnosticos.map(item => {
-                                return (<tr key={item.id}>
-                                    <th scope="row">{item.paciente}</th>
-                                    <th>{item.reclamacao}</th>
-                                    <th>{item.dataDiagnostico}</th>
-                                    <th>{item.diagnostico}</th>
-                                    <th className="text-center">
-                                        <span onClick={editar}><EditButton /></span>
-                                        <span onClick={deletar}><DeleteButton /></span>
-                                    </th>
-                                </tr>)
-                            })
-                        }
-                    </tbody>
-                </table>
-            </div>
+                            <table id="diagnosticosTab" className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Paciente</th>
+                                        <th>Reclamações</th>
+                                        <th>Data Diagnóstico</th>
+                                        <th>Diagnóstico</th>
+                                        <th className="text-center">Opções</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        diagnosticos.map(item => {
+                                            return (<tr key={item.id}>
+                                                <th scope="row">{item.paciente}</th>
+                                                <th>{item.reclamacao}</th>
+                                                <th>{item.dataDiagnostico}</th>
+                                                <th>{item.diagnostico}</th>
+                                                <th className="text-center">
+                                                    <span onClick={editar}><EditButton /></span>
+                                                    <span onClick={deletar}><DeleteButton /></span>
+                                                </th>
+                                            </tr>)
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                    :
+                    <>
+                        <Redirect to="home" />
+                    </>
+            }
         </>
     );
 }

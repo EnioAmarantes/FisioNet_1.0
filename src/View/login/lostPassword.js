@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import firebase from "../../Config/firebase";
+import Artigos from "../artigos";
+import Logo from "../../Components/images/fisioLogo.png";
 
 import "firebase/auth";
 
@@ -20,7 +22,15 @@ function LostPassword() {
 
     return (
         <>
+        <div className="row m-0 p-0 align-items-center justify-content-center">
+            <div className="col-8 m-0">
+                <Artigos />
+
+            </div>
+            <div className="col-4">
+
             <form className="text-center form-login mx-auto mt-5">
+            <img id="fisioLogo" src={Logo} alt="logo da Fisionet" />
                 <h3 className="mb-3 font-weight-bold">Recuperação de Senha</h3>
                 <input onChange={e => setEmail(e.target.value)} className="form-control my-2 mb-3" type="email" placeholder="E-mail" />
 
@@ -28,8 +38,10 @@ function LostPassword() {
                     <span>{msg}</span>
                 </div>
 
-                <button onClick={recuperarSenha} type="button" className="btn btn-lg btn-block btn-enviar">Recuperar Senha</button>
+                <button onClick={recuperarSenha} type="button" className="btn btn-lg btn-login btn-block my-6">Recuperar Senha</button>
             </form>
+            </div>
+            </div>
         </>
     );
 }

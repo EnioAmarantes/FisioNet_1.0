@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import firebase from "firebase";
+import { Redirect } from "react-router";
+import { useSelector } from "react-redux";
 
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
@@ -47,7 +49,7 @@ function Tratamentos() {
     var listaTratamentos = [];
 
     useEffect(() => {
-        if(loadMode == 0)
+        if (loadMode == 0)
             updateStatus(STATUS.OK, MSG_CARREGANDO);
 
         firebase.firestore().collection(COLLECTION).get().then(async (res) => {
@@ -58,7 +60,7 @@ function Tratamentos() {
                 })
             })
             setTratamentos(listaTratamentos);
-            if(loadMode == 0)
+            if (loadMode == 0)
                 updateStatus(STATUS.OK, MSG_CARREGADO);
         })
 
@@ -167,76 +169,87 @@ function Tratamentos() {
     }
 
     function setStatusColor(type) {
-        switch (type) {
-            case STATUS.OK:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
-                break;
-            case STATUS.EDIT:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
-                break;
-            case STATUS.REMOVE:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
-                break;
-            case STATUS.ERRO:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
-                break;
-            default:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
-                ;
-                break;
+        if(document.getElementById("divStatus") != null){
+            switch (type) {
+                case STATUS.OK:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
+                    break;
+                case STATUS.EDIT:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
+                    break;
+                case STATUS.REMOVE:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
+                    break;
+                case STATUS.ERRO:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
+                    break;
+                default:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
+                    ;
+                    break;
+            }
         }
     }
 
     return (
         <>
-            <SideBar />
+            {
+                useSelector(state => state.userLoged) > 0 ?
+                    <>
+                        <SideBar />
 
-            <div id="row" className="container justify-content-center">
-                <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
-                <form className="my-5">
-                    <div className="form-group m-5">
-                        <h2 className="text-center">Tela de Tratamentos</h2>
+                        <div id="row" className="container justify-content-center">
+                            <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
+                            <form className="my-5">
+                                <div className="form-group m-5">
+                                    <h2 className="text-center">Tela de Tratamentos</h2>
 
-                        <input id="nomeTratamento" onChange={(e) => setNomeTratamento(e.target.value)} className="form-control my-2" type="text" placeholder="Tratamento" />
+                                    <input id="nomeTratamento" onChange={(e) => setNomeTratamento(e.target.value)} className="form-control my-2" type="text" placeholder="Tratamento" />
 
-                        <input id="indicacao" onChange={(e) => setIndicacao(e.target.value)} className="form-control my-2" type="text" placeholder="Indicação" />
+                                    <input id="indicacao" onChange={(e) => setIndicacao(e.target.value)} className="form-control my-2" type="text" placeholder="Indicação" />
 
-                        <label htmlFor="descTratamento">Descrição do Tratamento</label>
-                        <textarea id="descTratamento" onChange={(e) => setDescTratamento(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
+                                    <label htmlFor="descTratamento">Descrição do Tratamento</label>
+                                    <textarea id="descTratamento" onChange={(e) => setDescTratamento(e.target.value)} className="form-control rounded-0 my-2" rows="3"></textarea>
 
-                    </div>
+                                </div>
 
-                    <button id="btnTratamento" type="button" className="btn btn-login my-2"
-                        onClick={registrar}>{loadMode == 0 ? "Cadastrar" : "Editar"}</button>
-                </form>
+                                <button id="btnTratamento" type="button" className="btn btn-login my-2"
+                                    onClick={registrar}>{loadMode == 0 ? "Cadastrar" : "Editar"}</button>
+                            </form>
 
-                <table id="tratamentosTab" className="table table-hover">
-                    <thead key="thead">
-                        <tr>
-                            <th scope="col">Tratamento</th>
-                            <th scope="col">Indicação</th>
-                            <th scope="col">Descrição</th>
-                            <th scope="col" className="text-center">Opções</th>
-                        </tr>
-                    </thead>
-                    <tbody key="tbody">
-                        {
-                            tratamentos.map(item => {
-                                return (<tr key={item.id}>
-                                    <th scope="row">{item.nomeTratamento}</th>
-                                    <th>{item.indicacao}</th>
-                                    <th>{item.descTratamento}</th>
-                                    <th className="text-center">
-                                        <span onClick={editar}><EditButton /></span>
-                                        <span onClick={deletar}><DeleteButton /></span>
-                                    </th>
-                                </tr>)
-                            })
-                        }
-                    </tbody>
-                </table>
-            </div>
+                            <table id="tratamentosTab" className="table table-hover">
+                                <thead key="thead">
+                                    <tr>
+                                        <th scope="col">Tratamento</th>
+                                        <th scope="col">Indicação</th>
+                                        <th scope="col">Descrição</th>
+                                        <th scope="col" className="text-center">Opções</th>
+                                    </tr>
+                                </thead>
+                                <tbody key="tbody">
+                                    {
+                                        tratamentos.map(item => {
+                                            return (<tr key={item.id}>
+                                                <th scope="row">{item.nomeTratamento}</th>
+                                                <th>{item.indicacao}</th>
+                                                <th>{item.descTratamento}</th>
+                                                <th className="text-center">
+                                                    <span onClick={editar}><EditButton /></span>
+                                                    <span onClick={deletar}><DeleteButton /></span>
+                                                </th>
+                                            </tr>)
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
 
+                    </>
+                    :
+                    <>
+                        <Redirect to="home" />
+                    </>
+            }
         </>
     );
 }

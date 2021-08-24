@@ -1,15 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {useSelector, useDispatch} from 'react-redux';
+import { Confirm } from 'react-st-modal';
 
 import "./sidebar.css";
 
 function SideBar() {
 
+    const dispatch = useDispatch();
+
     function hide(){
 
     }
+
+    async function logout(){
+        const result = await Confirm('Deseja realmente fazer LogOut do sistema?', 'LOGOUT');
+
+        if(result)
+            dispatch({type: 'LOGOUT'});
+    }
     
-    return(<div id="sidebar" className="sidebar">
+    return(
+    <div id="sidebar" className="sidebar">
         <div className="logo_content">
             <div className="logo">
                 <span id="fisonet" className="material-icons mx-2">spa</span>
@@ -42,12 +54,19 @@ function SideBar() {
                 <span className="tooltip">Pacientes</span>
             </li>
 
-            <li>
+            <li onClick={logout}>
                 <Link to="/tratamentos">
                     <span id="tratamento" className="material-icons mx-2">settings_backup_restore</span>
                     <span className="links_name">Tratamentos</span>
                 </Link>
                 <span className="tooltip">Pacientes</span>
+            </li>
+            <li>
+                <Link onClick={logout}>
+                    <span id="logout" className="material-icons mx-2">logout</span>
+                    <span className="links_name">LogOut</span>
+                </Link>
+                <span className="tooltip">LogOut</span>
             </li>
         </ul>
     </div>

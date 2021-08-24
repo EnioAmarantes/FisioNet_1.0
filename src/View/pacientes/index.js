@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firebase from "firebase";
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router";
 
 import SideBar from "../../Components/sidebar";
 import EditButton from "../../Components/buttons/editButton";
@@ -236,102 +238,113 @@ function Pacientes() {
         setMsgStatus(text)
         setTimeout(function () {
             setMsgStatus(null);
-            setStatusColor();
+                setStatusColor();
         }, 3000);
     }
 
     function setStatusColor(type) {
-        switch (type) {
-            case STATUS.OK:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
-                break;
-            case STATUS.EDIT:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
-                break;
-            case STATUS.REMOVE:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
-                break;
-            case STATUS.ERRO:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
-                break;
-            default:
-                document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
-                ;
-                break;
+        if(document.getElementById("divStatus") != null){
+            switch (type) {
+                case STATUS.OK:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_OK;
+                    break;
+                case STATUS.EDIT:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_EDIT;
+                    break;
+                case STATUS.REMOVE:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_REMOVE;
+                    break;
+                case STATUS.ERRO:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_ERROR;
+                    break;
+                default:
+                    document.getElementById("divStatus").style.backgroundColor = STATUS_COLOR_DEFAULT;
+                    ;
+                    break;
+            }
         }
     }
 
     return (
         <>
-            <SideBar />
+            {
+                useSelector(state => state.userLoged) > 0 ?
+                <>
+                    <SideBar />
 
-            <div id="container" className="container justify-content-center col-12">
-                <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
-                <form className="my-5">
-                    <div className="form-group m-5">
-                        <h2 className="text-center">{loadMode ? "Editar Pacientes" : "Cadastro de Pacientes"}</h2>
-                        <div className="row my-3">
-                            <div className="col-md-4 col-xs-12">
-                                <div className="form-group">
-                                    <img id="avatar" className="card-img" src={urlImagem ? urlImagem : AVATAR_PADRAO}
-                                        alt="Imagem Aqui" />
-                                    <button className="btn btn-login" type="button" onClick={tirarFoto}>Tire Foto
-                                    </button>
+                    <div id="container" className="container justify-content-center col-12">
+                        <div id="divStatus" className="text-center p-4 my-5"><span><strong>{msgStatus}</strong></span></div>
+                        <form className="my-5">
+                            <div className="form-group m-5">
+                                <h2 className="text-center">{loadMode ? "Editar Pacientes" : "Cadastro de Pacientes"}</h2>
+                                <div className="row my-3">
+                                    <div className="col-md-4 col-xs-12">
+                                        <div className="form-group">
+                                            <img id="avatar" className="card-img" src={urlImagem ? urlImagem : AVATAR_PADRAO}
+                                                alt="Imagem Aqui" />
+                                            <button className="btn btn-login" type="button" onClick={tirarFoto}>Tire Foto
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="block col-8">
+                                        <input id="nomePaciente" onChange={(e) => setNomePaciente(e.target.value)} className="form-control my-2" type="text"
+                                            placeholder="Nome do paciente" />
+                                        <input id="idade" onChange={(e) => setIdade(e.target.value)} className="form-control my-2" type="number" placeholder="Idade" />
+                                        <label htmlFor="tratamento">Tratamento</label>
+                                        <select id="tratamento" value={tratamento} onChange={(e) => setTratamento(e.target.value)} className="form-control my-2">
+                                            <option defaultValue>Selecione um Tratamento</option>
+                                            {
+                                                tratamentos.map(item => {
+                                                    return (
+                                                        <option key={item.id} value={item.nomeTratamento}>{item.nomeTratamento}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                        <label className="" htmlFor="prox_consulta">Próxima Conulta</label>
+                                        <input id="proxConsulta" onChange={(e) => setProxConsulta(e.target.value)} className="form-control my-2" type="date" />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="block col-8">
-                                <input id="nomePaciente" onChange={(e) => setNomePaciente(e.target.value)} className="form-control my-2" type="text"
-                                    placeholder="Nome do paciente" />
-                                <input id="idade" onChange={(e) => setIdade(e.target.value)} className="form-control my-2" type="number" placeholder="Idade" />
-                                <label htmlFor="tratamento">Tratamento</label>
-                                <select id="tratamento" value={tratamento} onChange={(e) => setTratamento(e.target.value)} className="form-control my-2">
-                                    <option defaultValue>Selecione um Tratamento</option>
-                                    {
-                                        tratamentos.map(item => {
-                                            return (
-                                                <option key={item.id} value={item.nomeTratamento}>{item.nomeTratamento}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                                <label className="" htmlFor="prox_consulta">Próxima Conulta</label>
-                                <input id="proxConsulta" onChange={(e) => setProxConsulta(e.target.value)} className="form-control my-2" type="date" />
-                            </div>
-                        </div>
+                            <button id="btnPaciente" type="button" className="btn btn-login my-2"
+                                onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
+                        </form>
+
+                        <table id="pacientesTab" className="table table-hover">
+                            <thead key="thread">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Tratamento</th>
+                                    <th>Próxima Consulta</th>
+                                    <th className="text-center">Opções</th>
+                                </tr>
+                            </thead>
+
+                            <tbody key="tbody">
+                                {
+                                    pacientes.map(item => {
+                                        return (<tr key={item.id}>
+                                            <th scope="row">{item.nomePaciente}</th>
+                                            <th>{item.idade}</th>
+                                            <th>{item.tratamento}</th>
+                                            <th>{item.proxConsulta}</th>
+                                            <th className="text-center">
+                                                <span onClick={editar}><EditButton /></span>
+                                                <span onClick={deletar}><DeleteButton /></span>
+                                            </th>
+                                        </tr>)
+                                    })
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                    <button id="btnPaciente" type="button" className="btn btn-login my-2"
-                        onClick={registrar}>{loadMode ? "Editar" : "Cadastrar"}</button>
-                </form>
-
-                <table id="pacientesTab" className="table table-hover">
-                    <thead key="thread">
-                        <tr>
-                            <th>Nome</th>
-                            <th>Idade</th>
-                            <th>Tratamento</th>
-                            <th>Próxima Consulta</th>
-                            <th className="text-center">Opções</th>
-                        </tr>
-                    </thead>
-
-                    <tbody key="tbody">
-                        {
-                            pacientes.map(item => {
-                                return (<tr key={item.id}>
-                                    <th scope="row">{item.nomePaciente}</th>
-                                    <th>{item.idade}</th>
-                                    <th>{item.tratamento}</th>
-                                    <th>{item.proxConsulta}</th>
-                                    <th className="text-center">
-                                        <span onClick={editar}><EditButton /></span>
-                                        <span onClick={deletar}><DeleteButton /></span>
-                                    </th>
-                                </tr>)
-                            })
-                        }
-                    </tbody>
-                </table>
-            </div>
+                </>
+                :
+                <>
+                <Redirect to="home" />
+                </>
+            }
         </>
     );
 }
