@@ -5,6 +5,7 @@ import "./login.css";
 import Artigos from "../artigos";
 import Logo from "../../Components/images/fisioLogo.png";
 import { useDispatch } from "react-redux";
+import { Redirect } from "react-router";
 
 function NewUser() {
 
@@ -14,10 +15,12 @@ function NewUser() {
     const [msg, setMsg] = useState();
     const [carregando, setCarregando] = useState();
     const dispatch = useDispatch();
+    const [cadastrado, setCadastrado] = useState(0);
 
     function cadastrar() {
         setCarregando(1);
         setMsgType(null);
+
 
         if (!email || !senha) {
             setMsgType("erro");
@@ -28,16 +31,9 @@ function NewUser() {
             .then(res => {
                 setCarregando(0);
                 setMsgType("ok");
-
-                firebase.auth().signInWithEmailAndPassword(email, senha)
-                    .then(res => {
-                        setTimeout(() => {
-                            dispatch({ type: 'LOGIN', userEmail: email });
-                        }, 500)
-                    })
-                    .catch(err => {
-                        setMsgType("erro");
-                    })
+                setTimeout(() => {
+                    setCadastrado(1);
+                }, 1000)
             }
             )
             .catch(err => {
@@ -58,11 +54,15 @@ function NewUser() {
                         break;
                 }
             });
+
     }
 
     return (
         <>
             <div className="row m-0 p-0 align-items-center justify-content-center">
+                {
+                    cadastrado > 0  ? <Redirect to="/" /> : null
+                }
                 <div className="col-8 m-0 p-0">
                     <Artigos />
 
@@ -85,7 +85,7 @@ function NewUser() {
                                     <div className="spinner-border text-secondary" role="status">
                                         <span className="sr-only"></span>
                                     </div>
-                                    : <button onClick={cadastrar} type="button" className="btn btn-lg btn-login btn-block my-4">Cadastrar e Logar</button>
+                                    : <button onClick={cadastrar} type="button" className="btn btn-lg btn-login btn-block my-4">Cadastrar</button>
                             }
 
                             <div className="text-black text-center my-5">
