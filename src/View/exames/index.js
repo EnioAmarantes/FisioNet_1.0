@@ -402,25 +402,25 @@ function Exames() {
 
                         </div>
 
-                        <div class="container">
+                        <div className="container">
                             <button id="btnModal" className="hidden" type="button" data-toggle="modal" data-target="#myModal">Abrir Modal</button>
-                            <div id="myModal" class="modal fade" role="dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
+                            <div id="myModal" className="modal fade" role="dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
                                         <h2>Detalhes do Exame</h2>
                                     </div>
 
-                                    <div class="modal-body mx-auto">
-                                        <div class="img-zoom-container">
+                                    <div className="modal-body mx-auto">
+                                        <div className="img-zoom-container">
                                             <img id="zoomExame" src={urlLens} alt="Exame em evidência" width="300" height="240" />
-                                            <div id="exameDetalhe" src={urlLens} class="img-zoom-result my-auto">
+                                            <div id="exameDetalhe" src={urlLens} className="img-zoom-result my-auto">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="modal-footer">
+                                    <div className="modal-footer">
 
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>

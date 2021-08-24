@@ -131,7 +131,7 @@ function ArtigoNovo() {
                 tituloArtigo: tituloArtigo,
                 introArtigo: introArtigo,
                 linkArtigo: linkArtigo,
-                artigoImg: artigoImg.name
+                artigoImg: artigoImg
             }).then(() => {
                 artigos[index].tituloArtigo = tituloArtigo;
                 artigos[index].introArtigo = introArtigo;
@@ -271,7 +271,7 @@ function ArtigoNovo() {
                                     <div className="block col-8">
                                         <input id="tituloArtigo" onChange={(e) => setTituloArtigo(e.target.value)} className="form-control my-2" type="text"
                                             placeholder="Título do Artigo" />
-                                        <lable htmlFor="introArtigo">Reclamações do Paciente</lable>
+                                        <lable htmlFor="introArtigo">Introdução do Artigo</lable>
 
                                     <textarea id="introArtigo" onChange={(e) => setIntroArtigo(e.target.value)} className="form-control rounded-0 my-2" rows="4"></textarea>
 
@@ -290,7 +290,7 @@ function ArtigoNovo() {
                                     <th>Título</th>
                                     <th>Introdução</th>
                                     <th>Disponível em:</th>
-                                    <th className="text-center">Opções</th>
+                                    <th className="text-center col-2">Opções</th>
                                 </tr>
                             </thead>
 

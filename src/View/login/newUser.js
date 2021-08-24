@@ -77,7 +77,7 @@ function NewUser() {
                             <input onChange={(e) => setEmail(e.target.value)} type="email" className="form-control my-2" placeholder="E-mail" />
                             <div>
                                 <input onChange={(e) => setSenha(e.target.value)} id="password" className="form-control my-2" type="password" placeholder="Senha" />
-                                <span class="lnr lnr-eye"></span>
+                                <span className="lnr lnr-eye"></span>
                             </div>
 
                             {

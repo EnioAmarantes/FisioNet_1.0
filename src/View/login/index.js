@@ -41,7 +41,7 @@ function Login() {
                 <input onChange={(e) => setEmail(e.target.value)} id="email" className="form-control my-2" type="text" placeholder="Email" />
                 <div>
                     <input onChange={(e) => setSenha(e.target.value)} id="password" className="form-control my-2" type="password" placeholder="Senha" />
-                    <span class="lnr lnr-eye"></span>
+                    <span className="lnr lnr-eye"></span>
                 </div>
 
                 <button id="loginButton" onClick={autenticar} className="btn btn-lg btn-login btn-block my-4" type="button">Logar</button>
