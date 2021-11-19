@@ -2,7 +2,7 @@
 Um ambiente para gerenciamento de tratamentos para Fisioterapeutas utilizando React
 
 - :heavy_check_mark: Login
-  - :heavy_check_mark: Login pelo Firebird
+  - :heavy_check_mark: Login pelo Firebase
   - :heavy_check_mark: Manter conectado
   - :heavy_check_mark: Cadastro pelo sistema
   - :heavy_check_mark: Recuperação de Senha
